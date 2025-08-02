@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Debug Agent Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-4">
+    <h1>AI Debug Agent - RCA History</h1>
+    <a href="/metrics" class="btn btn-info btn-sm float-end">View Metrics</a>
+    <form class="row g-3 mb-4" method="get">
+        <div class="col-md-3">
+            <input type="text" class="form-control" name="service" placeholder="Service name" value="{{ service or '' }}">
+        </div>
+        <div class="col-md-2">
+            <input type="text" class="form-control" name="level" placeholder="Level" value="{{ level or '' }}">
+        </div>
+        <div class="col-md-4">
+            <input type="text" class="form-control" name="keyword" placeholder="Keyword (RCA/logs)" value="{{ keyword or '' }}">
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </form>
+    <table class="table table-striped mt-2">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Timestamp</th>
+            <th>Service</th>
+            <th>Level</th>
+            <th>Summary</th>
+            <th>Details</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for entry in history %}
+            <tr>
+                <td>{{ loop.index0 }}</td>
+                <td>{{ entry.timestamp or '' }}</td>
+                <td>{{ entry.container_name or '' }}</td>
+                <td>{{ entry.level or '' }}</td>
+                <td>{{ entry.llm_output[:80] ~ ('...' if entry.llm_output|length > 80 else '') }}</td>
+                <td><a href="/rca/{{ loop.index0 }}" class="btn btn-sm btn-primary">View</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

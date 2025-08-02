@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RCA Detail</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        pre {
+            overflow-x: auto;
+            padding-bottom: 2em; /* ensures last line is visible above scrollbar */
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-4">
+    <a href="/" class="btn btn-link">&larr; Back to History</a>
+    <h2>RCA &amp; Fix Suggestion</h2>
+    <div class="card mb-3">
+        <div class="card-body">
+            <pre>{{ entry.llm_output }}</pre>
+        </div>
+    </div>
+    <div class="mb-3">
+        <a href="javascript:window.print()" class="btn btn-outline-secondary btn-sm">Export as PDF</a>
+        <form method="post" action="/rca/{{ idx }}/share_slack" style="display:inline">
+            <button type="submit" class="btn btn-outline-primary btn-sm">Share to Slack</button>
+        </form>
+    </div>
+
+    <h4>Feedback</h4>
+    <form method="post" class="mb-3">
+        <div class="mb-2">
+            <button name="feedback_type" value="up" type="submit" class="btn btn-success btn-sm">👍</button>
+            <button name="feedback_type" value="down" type="submit" class="btn btn-danger btn-sm">👎</button>
+            {% if feedback.vote == 'up' %}<span class="ms-2 text-success">You liked this RCA.</span>{% endif %}
+            {% if feedback.vote == 'down' %}<span class="ms-2 text-danger">You disliked this RCA.</span>{% endif %}
+        </div>
+        <div class="mb-2">
+            <textarea name="comment" class="form-control" rows="2" placeholder="Add a comment (optional)"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm">Submit Feedback</button>
+    </form>
+    {% if feedback.comment %}
+        <div class="alert alert-info">Your comment: {{ feedback.comment }}</div>
+    {% endif %}
+    <h4>Original Logs</h4>
+    <div class="card mb-3">
+        <div class="card-body">
+            <pre>{{ entry.batch_logs | tojson(indent=2) }}</pre>
+        </div>
+    </div>
+    <h4>Similar Logs (RAG Context)</h4>
+    <div class="card mb-3">
+        <div class="card-body">
+            <pre>{{ entry.similar_logs | tojson(indent=2) }}</pre>
+        </div>
+    </div>
+</div>
+</body>
+</html>
