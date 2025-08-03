@@ -68,7 +68,7 @@ class NewRelicLogFetcher:
         self.nrql_query = get_config("NEW_RELIC_NRQL_QUERY")
         if not self.nrql_query:
             self.nrql_query = (
-                f"SELECT `level`,`container_name`,`message`,`event` FROM {self.log_source_table} "
+                f"SELECT `level`,`container_name`,`message`,`event`,`namespace_name` FROM {self.log_source_table} "
                 f"WHERE `namespace_name` = '{self.namespace_name}' "
                 f"AND `message` NOT LIKE '{self.message_health_filter}' "
                 f"AND `message` NOT LIKE '{self.message_http_filter}' "

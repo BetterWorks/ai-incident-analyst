@@ -11,17 +11,19 @@
     <a href="/" class="btn btn-link">&larr; Back to History</a>
     <h2>Incident Metrics</h2>
     <div class="row">
-        <div class="col-md-6">
-            <canvas id="timelineChart"></canvas>
-            <canvas id="serviceChart" class="mt-4"></canvas>
-            <canvas id="levelChart" class="mt-4"></canvas>
-        </div>
-        <div class="col-md-8">
+        <div class="col-md-12">
             <canvas id="timelineChart"></canvas>
         </div>
+    </div>
+    <div class="row mt-4">
         <div class="col-md-4">
             <canvas id="serviceChart"></canvas>
-            <canvas id="levelChart" class="mt-4"></canvas>
+        </div>
+        <div class="col-md-4">
+            <canvas id="namespaceChart"></canvas>
+        </div>
+        <div class="col-md-4">
+            <canvas id="levelChart"></canvas>
         </div>
     </div>
 </div>
@@ -49,6 +51,19 @@
                 label: 'By Service',
                 data: {{ service_values|tojson | safe }},
                 backgroundColor: 'orange'
+            }]
+        },
+        options: {responsive: true}
+    });
+    // Namespace chart
+    new Chart(document.getElementById('namespaceChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: {{ namespace_labels|tojson | safe }},
+            datasets: [{
+                label: 'By Namespace',
+                data: {{ namespace_values|tojson | safe }},
+                backgroundColor: 'purple'
             }]
         },
         options: {responsive: true}
