@@ -39,7 +39,7 @@ ai-incident-analyst/
 ```
 
 ## Table of Contents
-- [Project Overview](#ai-incident-analyst)
+- [Project Overview](#project-overview)
 - [Setup Instructions](#setup-instructions)
 - [Environment Variables](#environment-variables)
 - [Usage](#usage)
