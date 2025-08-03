@@ -47,6 +47,7 @@ class NewRelicLogFetcher:
         - NR_CONTAINER_NAME
         - NR_MESSAGE_HEALTH_FILTER
         - NR_MESSAGE_HTTP_FILTER
+        - NR_MESSAGE_ERROR_FILTER
         - NR_TIME_WINDOW
         - NR_LIMIT_COUNT
         - NEW_RELIC_NRQL_QUERY (optional: full custom query)
@@ -61,6 +62,7 @@ class NewRelicLogFetcher:
         self.namespace_name = get_config("NR_NAMESPACE_NAME", default="betterworks-rainforest")
         self.container_name = get_config("NR_CONTAINER_NAME", default="%conversations%")
         self.message_health_filter = get_config("NR_MESSAGE_HEALTH_FILTER", default="%/health%")
+        self.message_error_filter = get_config("NR_MESSAGE_ERROR_FILTER", default="%error%")
         self.message_http_filter = get_config("NR_MESSAGE_HTTP_FILTER", default="%HTTP/1.1%")
         self.time_window = get_config("NR_TIME_WINDOW", default="24 hours ago")
         self.limit_count = get_config("NR_LIMIT_COUNT", default="1000")
@@ -73,6 +75,7 @@ class NewRelicLogFetcher:
                 f"AND `message` NOT LIKE '{self.message_health_filter}' "
                 f"AND `message` NOT LIKE '{self.message_http_filter}' "
                 f"AND `container_name` LIKE '{self.container_name}' "
+                f"AND `message` LIKE '{self.message_error_filter}' "
                 f"SINCE {self.time_window} LIMIT {self.limit_count}"
             )
 
