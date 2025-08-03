@@ -79,6 +79,7 @@ def run_pipeline(from_time, to_time, batch_size=5, slack=False):
     entry = {
         "timestamp": meta_log.get("timestamp", dt.utcnow().isoformat()),
         "container_name": meta_log.get("container_name", ""),
+        "namespace_name": meta_log.get("namespace_name", ""),
         "level": meta_log.get("level", ""),
         "llm_output": result["llm_output"],
         "batch_logs": cleaned_logs[:batch_size],

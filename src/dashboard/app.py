@@ -27,6 +27,8 @@ def metrics():
     timeline_sorted = sorted(timeline.items())
     # By service
     service_counts = Counter(e.get("container_name", "unknown") for e in history)
+    # By namespace
+    namespace_counts = Counter(e.get("namespace_name", "unknown") for e in history)
     # By level
     level_counts = Counter(e.get("level", "unknown") for e in history)
     return render_template(
@@ -35,6 +37,8 @@ def metrics():
         timeline_values=[c for _, c in timeline_sorted],
         service_labels=list(service_counts.keys()),
         service_values=list(service_counts.values()),
+        namespace_labels=list(namespace_counts.keys()),
+        namespace_values=list(namespace_counts.values()),
         level_labels=list(level_counts.keys()),
         level_values=list(level_counts.values()),
     )
@@ -60,11 +64,14 @@ def home():
     history = load_history()
     # Get search params
     service = request.args.get("service", "").strip().lower()
+    namespace = request.args.get("namespace", "").strip().lower()
     level = request.args.get("level", "").strip().lower()
     keyword = request.args.get("keyword", "").strip().lower()
     # Filter
     def match(entry):
         if service and service not in (entry.get("container_name", "").lower()):
+            return False
+        if namespace and namespace not in (entry.get("namespace_name", "").lower()):
             return False
         if level and level != (entry.get("level", "").lower()):
             return False
@@ -77,7 +84,7 @@ def home():
     filtered = [e for e in history if match(e)]
     # Sort by most recent
     filtered = sorted(filtered, key=lambda x: x.get("timestamp", ""), reverse=True)
-    return render_template("home.html", history=filtered, service=service, level=level, keyword=keyword)
+    return render_template("home.html", history=filtered, service=service, namespace=namespace, level=level, keyword=keyword)
 
 
 # Utility function, not a route
@@ -130,7 +137,9 @@ def share_to_slack(idx):
     # Format message
     msg = f"*AI RCA & Fix Suggestion:*\n*Logs:*\n"
     for log in entry.get("batch_logs", []):
-        msg += f"- {log.get('timestamp', '')} | {log.get('container_name', '')} | {log.get('level', '')} | {log.get('message', '')}\n"
+        namespace = log.get('namespace_name', '')
+        namespace_text = f" | {namespace}" if namespace else ""
+        msg += f"- {log.get('timestamp', '')} | {log.get('container_name', '')} | {log.get('level', '')}{namespace_text} | {log.get('message', '')}\n"
     msg += f"\n*RCA & Fix:*\n{entry.get('llm_output', '')}"
     try:
         notifier = SlackNotifier()
