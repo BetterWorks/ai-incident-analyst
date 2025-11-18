@@ -65,7 +65,7 @@ class NewRelicLogFetcher:
         self.message_error_filter = get_config("NR_MESSAGE_ERROR_FILTER", default="%error%")
         self.message_http_filter = get_config("NR_MESSAGE_HTTP_FILTER", default="%HTTP/1.1%")
         self.time_window = get_config("NR_TIME_WINDOW", default="24 hours ago")
-        self.limit_count = get_config("NR_LIMIT_COUNT", default="1000")
+        self.limit_count = get_config("NR_LIMIT_COUNT", default="5000")
         # Compose NRQL query: allow full override, else build from config
         self.nrql_query = get_config("NEW_RELIC_NRQL_QUERY")
         if not self.nrql_query:

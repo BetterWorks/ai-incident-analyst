@@ -22,7 +22,7 @@ def run_pipeline(from_time, to_time, batch_size=5, slack=False):
         base_query = re.sub(r"LIMIT \d+", "", base_query, flags=re.IGNORECASE)
         base_query = re.sub(r"(\d+\s*)?(hours|days) ago", "", base_query, flags=re.IGNORECASE)
         base_query = re.sub(r"\s+", " ", base_query).strip()
-        nrql_query = f"{base_query} SINCE '{from_time}' UNTIL '{to_time}' LIMIT 1000"
+        nrql_query = f"{base_query} SINCE '{from_time}' UNTIL '{to_time}' LIMIT 5000"
     else:
         print("Fetching logs from New Relic: last 24 hours")
         fetcher = NewRelicLogFetcher()
@@ -77,7 +77,7 @@ def run_pipeline(from_time, to_time, batch_size=5, slack=False):
     # Use the first log in the batch for top-level metadata
     meta_log = cleaned_logs[0] if cleaned_logs else {}
     entry = {
-        "timestamp": meta_log.get("timestamp", dt.utcnow().isoformat()),
+        "timestamp": meta_log.get("timestamp", dt.now(dt.timezone.utc).isoformat()),
         "container_name": meta_log.get("container_name", ""),
         "namespace_name": meta_log.get("namespace_name", ""),
         "level": meta_log.get("level", ""),
